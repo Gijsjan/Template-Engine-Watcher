@@ -31,19 +31,12 @@ var coffee = {
 var convertors = [jade, stylus, coffee];
 
 _.each(convertors, function(convertor) {
-	try {
-		var stats_base = fs.lstatSync(convertor.base);
-		var stats_out = fs.lstatSync(convertor.out);
-
-		if (stats_base.isDirectory() && stats_out.isDirectory()) watchConvertor(convertor);
-	}
-	catch (e) {
-		throw new Error('\n\nYour paths are wrong!\n'+convertor.base+'\n'+convertor.out+'\n\n');
-	}
+	watchConvertor(convertor);
 });
 
 function watchConvertor(convertor) {
 	exec('find ' + convertor.base, function(error, stdout, stderr) {
+		if (error) throw error;
 		var dirs = _.compact(stdout.split('\n'));
 		
 		_.each(dirs, function(dir) {
