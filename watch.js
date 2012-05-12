@@ -1,7 +1,9 @@
 var fs = require('fs'),
 	util = require('util'),
-    exec = require('child_process').exec,
-    _ = require('underscore');
+	exec = require('child_process').exec;
+
+try { var _ = require('underscore'); }
+catch (err) { throw new Error("\n\nI love Underscore.js, don't you?\n\n"); }
 
 console.log("Watching to convert Coffee/Stylus/Jade");
 
@@ -29,7 +31,15 @@ var coffee = {
 var convertors = [jade, stylus, coffee];
 
 _.each(convertors, function(convertor) {
-	watchConvertor(convertor);
+	try {
+		var stats_base = fs.lstatSync(convertor.base);
+		var stats_out = fs.lstatSync(convertor.out);
+
+		if (stats_base.isDirectory() && stats_out.isDirectory()) watchConvertor(convertor);
+	}
+	catch (e) {
+		throw new Error('\n\nYour paths are wrong!\n'+convertor.base+'\n'+convertor.out+'\n\n');
+	}
 });
 
 function watchConvertor(convertor) {
