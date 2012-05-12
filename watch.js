@@ -40,8 +40,8 @@ function watchConvertor(convertor) {
 		var dirs = _.compact(stdout.split('\n'));
 		
 		_.each(dirs, function(dir) {
-			fs.stat(dir, function (err, stats) {
-				if (err) throw err;
+			fs.stat(dir, function (error, stats) {
+				if (error) throw error;
 				if (stats.isDirectory()) {
 					fs.watch(dir, function(event, filename) {
 						if (filename.split('.').pop() === convertor.extension) {
@@ -51,10 +51,6 @@ function watchConvertor(convertor) {
 				}
 			});
 		});
-
-		if (error !== null) {
-			console.log('exec error: ' + error);
-		}
 	});
 }
 
@@ -67,11 +63,10 @@ function execConvertor(convertor, filepath) {
 
 	exec(exec_str,
 		function (error, stdout, stderr) {
+			if (error) throw error;
+
 			console.log('stdout: ' + stdout);
 			console.log('stderr: ' + stderr);
-			if (error !== null) {
-				console.log('exec error: ' + error);
-			}
 		}
 	);
 }
